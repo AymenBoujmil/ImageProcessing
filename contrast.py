@@ -32,7 +32,7 @@ def egalisation_histogram2(imageMatrix, ndG, nbLines, nbCols):
 
 
 def transformation_lineaire(imageMatrix, ndG, nbLines, nbCols,p1,p2):
-  img = np.empty(imageMatrix.shape, dtype=float)
+  img = np.empty(imageMatrix.shape, dtype=int)
   for i in range(0,nbLines):
     for j in range(0,nbCols):
       if (imageMatrix[i, j] <p1[0]):
@@ -46,5 +46,4 @@ def transformation_lineaire(imageMatrix, ndG, nbLines, nbCols,p1,p2):
         a = (255 - p2[1]) / (255 - p2[0])
         b = 255 - 255 * a
         img[i, j] = int(a * imageMatrix[i, j] + b)
-  print(img)
-  return img
+  return img.astype(dtype=int)
