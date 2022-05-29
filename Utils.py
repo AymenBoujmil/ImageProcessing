@@ -1,4 +1,5 @@
 import math
+
 def moyenne(imageMatrix, ndG, nbLines, nbCols):
   somme=0
   for i in range(0,nbLines):
@@ -42,3 +43,4 @@ def RSB(imageMatrix, ndG, nbLines, nbCols,filtredImage):
   if b == 0:
    return 1
   return math.sqrt(s/b)
+

@@ -43,7 +43,8 @@ menubar.add_cascade(label="filtres", menu=menu3)
 
 fenetre.config(menu=menubar)
 
-
+l = Label(fenetre, text = "Nom")
+l.pack()
 
 
 fenetre.mainloop()
