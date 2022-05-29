@@ -35,15 +35,16 @@ def transformation_lineaire(imageMatrix, ndG, nbLines, nbCols,p1,p2):
   img = np.empty(imageMatrix.shape, dtype=float)
   for i in range(0,nbLines):
     for j in range(0,nbCols):
-      if (imageMatrix[i,j] <p1[0]):
+      if (imageMatrix[i, j] <p1[0]):
         a = p1[1]/p1[0]
-        img[i,j] = a * imageMatrix[i,j]
+        img[i,j] = int(a * imageMatrix[i, j])
       elif (imageMatrix[i,j] <p2[0]):
         a = (p2[1]-p1[1])/(p2[0]-p1[0])
         b = p2[1]-a*p2[0]
-        img[i,j] = a * imageMatrix[i,j] + b
+        img[i,j] = int(a * imageMatrix[i, j] + b)
       else:
-        a = (255 - p2[1])/ (255- p2[0])
+        a = (255 - p2[1]) / (255 - p2[0])
         b = 255 - 255 * a
-        img[i,j] = a * imageMatrix[i,j] + b
+        img[i, j] = int(a * imageMatrix[i, j] + b)
+  print(img)
   return img

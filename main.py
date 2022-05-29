@@ -15,13 +15,14 @@ from contrast import *
 (imageMatrix, ndG, nbLines, nbCols) = readImage("./assets/mona.pgm")
 
 moy = moyenne(imageMatrix, ndG, nbLines, nbCols)
-ecartType = ecartType(imageMatrix, ndG, nbLines, nbCols)
+ecartT = ecartType(imageMatrix, ndG, nbLines, nbCols)
 
-def updateImage(newimage):
+def modify(bruitImage):
     global imageMatrix
     global moy
-    global ecartType
-    imageMatrix = newimage
+    global ecartT
+    global moyenneL
+    imageMatrix = bruitImage
     im.set_data(imageMatrix)
     canvas.draw()
     hist = histogramme(imageMatrix, ndG, nbLines, nbCols)
@@ -43,6 +44,7 @@ def reset():
 
 
 fenetre = Tk()
+fenetre.title("Image processing")
 image = plt.figure(1,figsize=(5,4))
 im = plt.imshow(imageMatrix, cmap="gray") # later use a.set_data(new_data)
 ax = plt.gca()
@@ -54,8 +56,9 @@ plt.close(1)
 canvas = FigureCanvasTkAgg(image, master=fenetre)
 canvas.draw()
 canvas.get_tk_widget().grid(row=1, column=1,columnspan=3)
-moyenneL = tk.Button(fenetre, text="Moyenne = " + str(round(moy, 2)), state=tk.DISABLED).grid(row=2, column=0,columnspan=3)
-ecartTypeL = tk.Button(fenetre, text="Ecart Type = " + str(round(ecartType, 2)), state=tk.DISABLED).grid(row=2, column=2,columnspan=3)
+moyenneL = tk.Button(fenetre, text="Moyenne = " + str(round(moy, 2)), state=tk.DISABLED)
+moyenneL.grid(row=2, column=0,columnspan=3)
+ecartTypeL = tk.Button(fenetre, text="Ecart Type = " + str(round(ecartT, 2)), state=tk.DISABLED).grid(row=2, column=2,columnspan=3)
 
 hist = histogramme(imageMatrix, ndG, nbLines, nbCols)
 histImage = plt.Figure(figsize=(4,2), dpi=100)
@@ -76,29 +79,30 @@ def alert():
 menubar = Menu(fenetre)
 
 menu1 = Menu(menubar, tearoff=0)
-menu1.add_command(label="Ouvrir", command=alert)
-menu1.add_command(label="Enregistrer", command=alert)
+# menu1.add_command(label="Ouvrir", command=alert)
+# menu1.add_command(label="Enregistrer", command=alert)
 menu1.add_command(label="reset", command=reset)
 menu1.add_separator()
 menu1.add_command(label="Sortir", command=fenetre.quit)
 menubar.add_cascade(label="Fichier", menu=menu1)
 
 menu2 = Menu(menubar, tearoff=0)
-menu2.add_command(label="Egalisation", command=alert)
-menu2.add_command(label="Transformation lineaire", command=alert)
-menu2.add_command(label="Transformation lineaire avec saturation", command=alert)
-menu2.add_command(label="Dilatation des zones claires", command=alert)
-menu2.add_command(label="Dilatation des zones sombres", command=alert)
-menu2.add_command(label="Dilatation des zones milieux", command=alert)
-menu2.add_command(label="Inversion de l'image", command=alert)
+menu2.add_command(label="Egalisation", command=lambda : modify(egalisation_histogram2(imageMatrix, ndG, nbLines, nbCols)))
+menu2.add_command(label="Transformation lineaire", command=lambda : modify(transformation_lineaire(imageMatrix, ndG, nbLines, nbCols, [0,0], [254,255])))
+menu2.add_command(label="Transformation lineaire avec saturation", command=lambda : modify(transformation_lineaire(imageMatrix, ndG, nbLines, nbCols, [imageMatrix.min() + 50 ,0],
+[imageMatrix.max() - 50,255])))
+menu2.add_command(label="Dilatation des zones claires", command=lambda : modify(transformation_lineaire(imageMatrix, ndG, nbLines, nbCols, [42, 20], [125, 60])))
+menu2.add_command(label="Dilatation des zones sombres", command=lambda : modify(transformation_lineaire(imageMatrix, ndG, nbLines, nbCols, [60,190], [70,220])))
+menu2.add_command(label="Dilatation des zones milieux", command=lambda : modify(transformation_lineaire(imageMatrix, ndG, nbLines, nbCols, [85,30], [170,225])))
+menu2.add_command(label="Inversion de l'image", command=lambda : modify(transformation_lineaire(imageMatrix, ndG, nbLines, nbCols, [0,255], [254,0])))
 menubar.add_cascade(label="Contrast", menu=menu2)
 
 menu3 = Menu(menubar, tearoff=0)
-menu3.add_command(label="Ajouter bruit", command=lambda : updateImage(bruit(imageMatrix, ndG, nbLines, nbCols)))
-menu3.add_command(label="filtre moyen", command=lambda: updateImage(filterApply(imageMatrix, ndG, nbLines, nbCols,9,"Moynenneur")))
-menu3.add_command(label="filtre guassian", command=lambda : updateImage( filterApply(imageMatrix, ndG, nbLines, nbCols,9,"Gaussian", sigma = 2)))
-menu3.add_command(label="filtre median", command=lambda : updateImage(filterMedian(imageMatrix, ndG, nbLines, nbCols,3)))
-menu3.add_command(label="filtre passe haut", command=lambda : updateImage(filterApply(imageMatrix, ndG, nbLines, nbCols,3,'passeHaut',number = 1)))
+menu3.add_command(label="Ajouter bruit", command=lambda : modify(bruit(imageMatrix, ndG, nbLines, nbCols)))
+menu3.add_command(label="filtre moyen", command=lambda: modify(filterApply(imageMatrix, ndG, nbLines, nbCols,5,"Moynenneur")))
+menu3.add_command(label="filtre guassian", command=lambda : modify( filterApply(imageMatrix, ndG, nbLines, nbCols,5,"Gaussian", sigma = 2)))
+menu3.add_command(label="filtre median", command=lambda : modify(filterMedian(imageMatrix, ndG, nbLines, nbCols,3)))
+menu3.add_command(label="filtre passe haut", command=lambda : modify(filterApply(imageMatrix, ndG, nbLines, nbCols,3,'passeHaut',number = 1)))
 menubar.add_cascade(label="filtres", menu=menu3)
 
 fenetre.config(menu=menubar)
