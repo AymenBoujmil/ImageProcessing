@@ -9,7 +9,9 @@ from contrast import *
 from morphologique import *
 
 (imageMatrix, ndG, nbLines, nbCols) = readImage("./assets/mona.pgm")
-
+(imageOriginal , ndG, nbLines, nbCols)= readImage("./assets/mona.pgm")
+print(imageOriginal)
+rsb = RSB(imageOriginal, ndG, nbLines, nbCols, imageMatrix)
 moy = moyenne(imageMatrix, ndG, nbLines, nbCols)
 ecartT = ecartType(imageMatrix, ndG, nbLines, nbCols)
 
@@ -18,15 +20,17 @@ def modify(bruitImage):
     global imageMatrix
     global moy
     global ecartT
-    global moyenneL
+    global rsb
     imageMatrix = bruitImage
     im.set_data(imageMatrix)
     canvas.draw()
     hist = histogramme(imageMatrix, ndG, nbLines, nbCols)
     moy = moyenne(imageMatrix, ndG, nbLines, nbCols)
     ecartT = ecartType(imageMatrix, ndG, nbLines, nbCols)
+    rsb = RSB(imageOriginal, ndG, nbLines, nbCols, imageMatrix)
     moyenneL.config(text="Moyenne = " + str(round(moy, 2)))
     ecartTypeL.config(text="Ecart Type = " + str(round(ecartT, 2)))
+    rsbL.config(text="RSB = " + str(round(moy, 2)))
     ax1.clear()
     ax1.plot(hist)
     bar1.draw()
@@ -36,6 +40,7 @@ def reset():
     global imageMatrix
     global ecartT
     global moyenneL
+    global rsb
     (newImage, ndG, nbLines, nbCols) = readImage("./assets/mona.pgm")
     imageMatrix = newImage
     im.set_data(imageMatrix)
@@ -44,6 +49,8 @@ def reset():
     ecartT = ecartType(imageMatrix, ndG, nbLines, nbCols)
     moyenneL.config(text="Moyenne = " + str(round(moy, 2)))
     ecartTypeL.config(text="Ecart Type = " + str(round(ecartT, 2)))
+    rsb = RSB(imageOriginal, ndG, nbLines, nbCols, imageMatrix)
+    rsbL.config(text="RSB = " + str(round(moy, 2)))
     hist = histogramme(imageMatrix, ndG, nbLines, nbCols)
     ax1.clear()
     ax1.plot(hist)
@@ -68,6 +75,8 @@ moyenneL = tk.Button(fenetre, text="Moyenne = " + str(round(moy, 2)), state=tk.A
 moyenneL.grid(row=2, column=0, columnspan=3)
 ecartTypeL = tk.Button(fenetre, text="Ecart Type = " + str(round(ecartT, 2)),font=("Arial", 13), state=tk.ACTIVE)
 ecartTypeL.grid(row=2, column=2, columnspan=3)
+rsbL = tk.Button(fenetre, text="RSB = " + str(round(rsb, 2)), font=("Arial", 13), state=tk.ACTIVE)
+rsbL.grid(row=3, column=1, columnspan=3)
 tk.ttk.Separator(fenetre, orient=VERTICAL).grid(column=30, row=0, rowspan=3, sticky='ns')
 tk.ttk.Separator(fenetre, orient=VERTICAL).grid(column=30, row=0, rowspan=3, sticky='ns')
 
@@ -124,7 +133,7 @@ menu3.add_command(label="filtre guassian",
                   command=lambda: modify(filterApply(imageMatrix, ndG, nbLines, nbCols, 5, "Gaussian", sigma=2)))
 menu3.add_command(label="filtre median", command=lambda: modify(filterMedian(imageMatrix, ndG, nbLines, nbCols, 3)))
 menu3.add_command(label="filtre passe haut",
-                  command=lambda: modify(filterApply(imageMatrix, ndG, nbLines, nbCols, 3, 'passeHaut', number=1)))
+                  command=lambda: modify(filterApply(imageMatrix, ndG, nbLines, nbCols, 2, 'passeHaut', number=1)))
 menubar.add_cascade(label="filtres", menu=menu3)
 
 menu4 = Menu(menubar, tearoff=0)

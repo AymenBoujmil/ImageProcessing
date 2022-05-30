@@ -54,5 +54,6 @@ def histogramme_normalise(imageMatrix, ndG, nbLines, nbCols):
         h[i] = h[i] / (nbLines * nbCols)
     return h
 
+
 def variance_C1_C2(pC1, moy_C1, moy_C2, moy_image):
-  return (pC1*(moy_C1-moy_image)**2)+((1-pC1)*(moy_C2-moy_image)**2)
+    return (pC1 * (moy_C1 - moy_image) ** 2) + ((1 - pC1) * (moy_C2 - moy_image) ** 2)
