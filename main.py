@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter.messagebox import *
@@ -50,28 +51,36 @@ def reset():
 
 
 fenetre = Tk()
+fenetre.configure(background= "white")
 fenetre.title("Image processing")
+L2 = Label(fenetre, text="Image", font=("Arial", 25), background="white", fg="blue")
+L2.grid(row=0, column=1, columnspan=3)
 image = plt.figure(1, figsize=(5, 4))
 im = plt.imshow(imageMatrix, cmap="gray")  # later use a.set_data(new_data)
 ax = plt.gca()
 ax.set_xticklabels([])
 ax.set_yticklabels([])
 plt.close(1)
-
 canvas = FigureCanvasTkAgg(image, master=fenetre)
 canvas.draw()
 canvas.get_tk_widget().grid(row=1, column=1, columnspan=3)
-moyenneL = tk.Button(fenetre, text="Moyenne = " + str(round(moy, 2)), state=tk.DISABLED)
+moyenneL = tk.Button(fenetre, text="Moyenne = " + str(round(moy, 2)), state=tk.ACTIVE,font=("Arial", 13))
 moyenneL.grid(row=2, column=0, columnspan=3)
-ecartTypeL = tk.Button(fenetre, text="Ecart Type = " + str(round(ecartT, 2)), state=tk.DISABLED)
+ecartTypeL = tk.Button(fenetre, text="Ecart Type = " + str(round(ecartT, 2)),font=("Arial", 13), state=tk.ACTIVE)
 ecartTypeL.grid(row=2, column=2, columnspan=3)
+tk.ttk.Separator(fenetre, orient=VERTICAL).grid(column=30, row=0, rowspan=3, sticky='ns')
+tk.ttk.Separator(fenetre, orient=VERTICAL).grid(column=30, row=0, rowspan=3, sticky='ns')
 
+L1 = Label(fenetre, text="Histogramme", font=("Arial", 25), background="white",fg="blue")
+tk.ttk.Separator(fenetre, ).grid(column=0, row=4, rowspan=3, sticky='ns')
+
+L1.grid(row=0, column=35, columnspan=3)
 hist = histogramme(imageMatrix, ndG, nbLines, nbCols)
-histImage = plt.Figure(figsize=(4, 2), dpi=100)
+histImage = plt.Figure(figsize=(5, 2), dpi=100)
 ax1 = histImage.add_subplot(111)
 
 bar1 = FigureCanvasTkAgg(histImage, fenetre)
-bar1.get_tk_widget().grid(row=3, column=1, columnspan=3)
+bar1.get_tk_widget().grid(row=1, column=35, columnspan=3)
 ax1.plot(hist)
 
 
@@ -120,6 +129,7 @@ menubar.add_cascade(label="filtres", menu=menu3)
 
 menu4 = Menu(menubar, tearoff=0)
 menu4.add_command(label="binarisation", command=lambda: modify(binarisation(imageMatrix, ndG, nbLines, nbCols)))
+menu4.add_command(label="seuillage", command=lambda: modify(seuillage_auto(imageMatrix, ndG, nbLines, nbCols)))
 menu4.add_command(label="dilatation",
                   command=lambda: modify(dilatation(imageMatrix, ndG, nbLines, nbCols, 3)))
 menu4.add_command(label="erosion",
