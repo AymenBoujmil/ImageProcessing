@@ -62,6 +62,7 @@ def dilatation(imageMatrix, ndG, nbLines, nbCols, n):
     return imageBin
 
 
+
 def erosion(imageMatrix, ndG, nbLines, nbCols, n):
     imageBin = np.array(imageMatrix)
     for i in range(0, nbLines):
